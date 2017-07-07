@@ -14,7 +14,6 @@ namespace Tests
     public class AbstractApiTest
     {
         private Process _process;
-
         private static readonly HttpClient _client = new HttpClient();
         protected const string BASE_URL = "http://127.0.0.1:8080";
 
@@ -26,8 +25,9 @@ namespace Tests
         [OneTimeTearDown]
         public void Terminate() => _process.Kill();
 
-        public async Task<string> Post(string route, IDictionary<string, string> values)
+        public async Task<string> Post(string route, IDictionary<string, string> values = null)
         {
+            values = values ?? new Dictionary<string, string>();
             HttpResponseMessage response = await _client.PostAsync($"{BASE_URL}{route}", new FormUrlEncodedContent(values));
             return await response.Content.ReadAsStringAsync();
         }
