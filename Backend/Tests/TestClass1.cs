@@ -45,14 +45,20 @@ namespace Tests
             }).Result, Is.EqualTo("Bob draws a new domino from the deck"));
         }
 
-        [Test]
-        public void Api_Play_Place()
+        [TestCase(1, 2, 3, 4)]
+        [TestCase(4, 8, 15, 16)]
+        [TestCase(15, 16, 23, 42)]
+        public void Api_Play_Place(int v1, int v2, int x, int y)
         {
             Assert.That(Post("/play", new Dictionary<string, string>
             {
                 ["name"] = "Bob",
-                ["action"] = "place"
-            }).Result, Is.EqualTo("Bob places a domino of value 2:5 on the board at position 17:23"));
+                ["action"] = "place",
+                ["domino-v1"] = $"{v1}",
+                ["domino-v2"] = $"{v2}",
+                ["position-x"] = $"{x}",
+                ["position-y"] = $"{y}"
+            }).Result, Is.EqualTo($"Bob places a domino of value {v1}:{v2} on the board at position {x}:{y}"));
         }
 
         [Test]
