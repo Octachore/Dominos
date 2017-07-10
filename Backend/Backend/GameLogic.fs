@@ -15,3 +15,4 @@ let play name action (domino : Domino) (position : Position) =
     | "quit" -> Success (sprintf "%s quits the game" name)
     | "win" -> Success (sprintf "%s wins the game!" name)
     | _ -> Failure "Unknown action"
+

@@ -23,7 +23,7 @@ let route_join_post =
 let route_start_game =
     request (fun r ->
         match enough_players with
-        | true -> start_game
+        | true -> start_game "alice" "bob"
         | _ -> handle_no_game_available true)
 
 let handle_play result = 
