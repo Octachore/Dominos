@@ -29,7 +29,7 @@ let route_start_game =
 let route_play_post =
     request(fun r ->
         match r.formData "name", r.formData "action" with // todo : add domino and position
-        | Choice1Of2 name, Choice1Of2 action -> play name action (Domino(2, 5)) (Position(17, 23))
+        | Choice1Of2 name, Choice1Of2 action -> play name action {v1=2; v2=5} {x=17; y=23}
         | _ -> BAD_REQUEST "error")
 
 let routes = [ GET >=> choose
