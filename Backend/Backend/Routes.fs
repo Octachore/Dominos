@@ -5,7 +5,6 @@ open Suave.Filters
 open Suave.Operators
 open Suave.Successful
 open Suave.RequestErrors
-open MetaGameLogic
 open GameLogic
 
 let route_join =
@@ -20,10 +19,10 @@ let route_join_post =
         | Choice1Of2 name -> OK (sprintf "%s joined the game." name)
         | Choice2Of2 msg -> BAD_REQUEST msg)
     
-let route_start_game =
+let route_start_post =
     request (fun r ->
-        match enough_players with
-        | true -> start_game "alice" "bob"
+        match enough_players, r.formData "player1", r.formData "player2" with
+        | true, Choice1Of2 p1, Choice1Of2 p2 -> start_game p1 p2
         | _ -> handle_no_game_available true)
 
 let handle_play result = 
@@ -43,9 +42,9 @@ let route_play_post =
 
 let routes = [ GET >=> choose
                  [ path "/hello" >=> OK "Hello GET"
-                   path "/join" >=> route_join
-                   path "/start" >=> route_start_game ]
+                   path "/join" >=> route_join ]
                POST >=> choose
                  [ path "/hello" >=> OK "Hello POST"
                    path "/join" >=> route_join_post
-                   path "/play" >=> route_play_post ] ]
+                   path "/play" >=> route_play_post
+                   path "/start" >=> route_start_post ] ]

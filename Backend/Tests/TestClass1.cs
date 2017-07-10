@@ -9,6 +9,8 @@ namespace Tests
 {
     public class TestClass1 : AbstractApiTest
     {
+        private async void StartGame(string p1, string p2) => await Post("/start", new Dictionary<string, string> { ["player1"] = p1, ["player2"] = p2 });
+
         [Test]
         public void Api_NotFound()
         {
@@ -29,15 +31,22 @@ namespace Tests
             Assert.That(Post("/join", new Dictionary<string, string> { ["name"] = "Nicolas Maurice" }).Result, Is.EqualTo("Nicolas Maurice joined the game."));
         }
 
-        [Test]
-        public void Api_Start()
+        [TestCase("Alice", "Bob")]
+        [TestCase("Bob", "Alice")]
+        [TestCase("Bob", "Eve")]
+        public void Api_Start(string player1, string player2)
         {
-            Assert.That(Get("/start").Result, Is.EqualTo("Starting game..."));
+            Assert.That(Post("/start", new Dictionary<string, string>
+            {
+                ["player1"] = player1,
+                ["player2"] = player2,
+            }).Result, Is.EqualTo($"Starting game for players {player1} and {player2}..."));
         }
 
         [Test]
         public void Api_Play_Draw()
         {
+            StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
                 ["name"] = "Bob",
@@ -45,11 +54,13 @@ namespace Tests
             }).Result, Is.EqualTo("Bob draws a new domino from the deck"));
         }
 
+
         [TestCase(1, 2, 3, 4)]
         [TestCase(4, 8, 15, 16)]
         [TestCase(15, 16, 23, 42)]
         public void Api_Play_Place(int v1, int v2, int x, int y)
         {
+            StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
                 ["name"] = "Bob",
@@ -64,6 +75,7 @@ namespace Tests
         [Test]
         public void Api_Play_Quit()
         {
+            StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
                 ["name"] = "Bob",
@@ -79,6 +91,31 @@ namespace Tests
                 ["name"] = "Bob",
                 ["action"] = "win"
             }).Result, Is.EqualTo("Bob wins the game!"));
+        }
+
+        [Test]
+        public void Api_Player_Not_In_Game()
+        {
+            StartGame("Alice", "Bob");
+            Assert.That(() => Post("/play", new Dictionary<string, string>
+            {
+                ["name"] = "Eve",
+                ["action"] = "quit"
+            }).Result, Is.EqualTo("Player Eve not found in any game"));
+            Assert.That(() => Post("/play", new Dictionary<string, string>
+            {
+                ["name"] = "Eve",
+                ["action"] = "win"
+            }).Result, Is.EqualTo("Player Eve not found in any game"));
+            Assert.That(() => Post("/play", new Dictionary<string, string>
+            {
+                ["name"] = "Eve",
+                ["action"] = "place",
+                ["domino-v1"] = $"1",
+                ["domino-v2"] = $"2",
+                ["position-x"] = $"3",
+                ["position-y"] = $"4"
+            }).Result, Is.EqualTo("Player Eve not found in any game"));
         }
     }
 }
