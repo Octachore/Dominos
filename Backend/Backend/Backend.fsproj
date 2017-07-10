@@ -55,9 +55,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <Compile Include="GameLogic.fs" />
+    <Compile Include="MetaGameLogic.fs" />
+    <Compile Include="Routes.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
