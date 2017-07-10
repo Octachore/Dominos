@@ -57,6 +57,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <Compile Include="ObjectModel.fs" />
+    <Compile Include="Repository.fs" />
     <Compile Include="GameLogic.fs" />
     <Compile Include="Routes.fs" />
     <Compile Include="Program.fs" />
@@ -66,6 +68,9 @@
       <HintPath>..\packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Suave">
       <HintPath>..\packages\Suave.2.1.1\lib\net40\Suave.dll</HintPath>
     </Reference>

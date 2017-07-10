@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestClass1 : AbstractApiTest
     {
-        private async void StartGame(string p1, string p2) => await Post("/start", new Dictionary<string, string> { ["player1"] = p1, ["player2"] = p2 });
+        private void StartGame(string p1, string p2) => Assert.That(Post("/start", new Dictionary<string, string> { ["player1"] = p1, ["player2"] = p2 }).Result, Is.EqualTo($"Starting game for players {p1} and {p2}..."));
 
         [Test]
         public void Api_NotFound()

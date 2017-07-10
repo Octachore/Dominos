@@ -2,24 +2,8 @@
 
 open Suave.Successful
 open System.IO
-
-
-// Types
-
-type Domino = {v1:int; v2:int}
-
-type Position = {x:int; y:int}
-
-type ActionResult =
-    | Success of string
-    | Failure of string
-
-type Deck = Domino list
-
-type Board = (Domino * Position) list
-
-type Game = {id:int; player1: string; player2: string; board: Board; main_deck: Deck; deck1: Deck; deck2: Deck}
-
+open ObjectModel
+open Repository
 
 // Fields
 let rnd = System.Random()
@@ -30,8 +14,9 @@ let mutable games = [] : Game list
 let enough_players = true
 
 let start_game player1 player2 = 
-    games <- {id=games.Length; player1=player1; player2=player2; board=[]; main_deck=[]; deck1=[]; deck2=[]} :: games
-    File.WriteAllText(@"C:\Users\Nicolas Maurice\Desktop\log.txt", sprintf "%A" games)
+    let new_game = {id=games.Length; player1=player1; player2=player2; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+    games <- new_game::games
+    write_game new_game
     OK (sprintf "Starting game for players %s and %s..." player1 player2)
 
 let handle_no_game_available watch =

@@ -6,6 +6,7 @@ open Suave.Operators
 open Suave.Successful
 open Suave.RequestErrors
 open GameLogic
+open ObjectModel
 
 let route_join =
     request (fun r ->
