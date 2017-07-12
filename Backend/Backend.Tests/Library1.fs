@@ -8,10 +8,9 @@ open System
 open System.IO
 open EqualityComparers
 
-type RepositoryTests() = 
-            
+type Tests() = 
     let init() = if File.Exists file then File.Delete file
-
+    
     [<Fact>]
     let ``repository write writes good data``() =
         init()
@@ -378,10 +377,9 @@ type RepositoryTests() =
         Assert.Equal({ game1 with player2="John" }, retrieved_game1.Value, new GameEqualityComparer())
         Assert.Equal(game2, retrieved_game2.Value, new GameEqualityComparer())
 
-type GameLogicTests() =
-    
     [<Fact>]
     let ``game logic start new games``() =
+        init()
         Assert.True(true)
 
         // act
@@ -396,8 +394,8 @@ type GameLogicTests() =
 
         let games = read_games()
         Assert.Equal(3, games.Length)
-        Assert.Equal(expected_game1, games.Item 0, new GameEqualityComparer())
+        Assert.Equal(expected_game1, games.Item 2, new GameEqualityComparer())
         Assert.Equal(expected_game2, games.Item 1, new GameEqualityComparer())
-        Assert.Equal(expected_game3, games.Item 2, new GameEqualityComparer())
+        Assert.Equal(expected_game3, games.Item 0, new GameEqualityComparer())
 
 
