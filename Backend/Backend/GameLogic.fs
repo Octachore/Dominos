@@ -1,21 +1,17 @@
 ﻿module GameLogic
 
 open Suave.Successful
-open System.IO
 open ObjectModel
 open Repository
 
 // Fields
 let rnd = System.Random()
 
-let mutable games = [] : Game list
-
 // Functions
 let enough_players = true
 
 let start_game player1 player2 = 
-    let new_game = {id=games.Length; player1=player1; player2=player2; board=[]; main_deck=[]; deck1=[]; deck2=[]}
-    games <- new_game::games
+    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=[]; main_deck=[]; deck1=[]; deck2=[]}
     write_game new_game
     OK (sprintf "Starting game for players %s and %s..." player1 player2)
 
@@ -24,7 +20,7 @@ let handle_no_game_available watch =
         | true -> OK "Watching a game while waiting..."
         | _ -> OK "Just waiting..."
 
-let get_game (player_name : string) = games |> List.tryFind(fun x ->
+let get_game (player_name : string) = read_games() |> List.tryFind(fun x ->
         match x with
         | {id = _; player1 = p1; player2 = p2} -> (String.equals player_name p1) || (String.equals player_name p2)
         | _ -> false)

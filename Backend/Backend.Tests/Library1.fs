@@ -1,13 +1,14 @@
 ﻿namespace Backend.Tests
 
-open Repository
 open ObjectModel
+open Repository
+open GameLogic
 open Xunit
 open System
 open System.IO
 open EqualityComparers
 
-type Class1() = 
+type RepositoryTests() = 
             
     let init() = if File.Exists file then File.Delete file
 
@@ -376,3 +377,27 @@ type Class1() =
         let retrieved_game2 = read_game 56
         Assert.Equal({ game1 with player2="John" }, retrieved_game1.Value, new GameEqualityComparer())
         Assert.Equal(game2, retrieved_game2.Value, new GameEqualityComparer())
+
+type GameLogicTests() =
+    
+    [<Fact>]
+    let ``game logic start new games``() =
+        Assert.True(true)
+
+        // act
+        start_game "Alice" "Bob" |> ignore 
+        start_game "Alice" "Bob" |> ignore
+        start_game "Charlie" "Eve" |> ignore
+
+        // assert
+        let expected_game1 = {id=0; player1="Alice"; player2="Bob"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+        let expected_game2 = {id=1; player1="Alice"; player2="Bob"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+        let expected_game3 = {id=2; player1="Charlie"; player2="Eve"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+
+        let games = read_games()
+        Assert.Equal(3, games.Length)
+        Assert.Equal(expected_game1, games.Item 0, new GameEqualityComparer())
+        Assert.Equal(expected_game2, games.Item 1, new GameEqualityComparer())
+        Assert.Equal(expected_game3, games.Item 2, new GameEqualityComparer())
+
+

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,12 @@ namespace Tests
     public class TestClass1 : AbstractApiTest
     {
         private void StartGame(string p1, string p2) => Assert.That(Post("/start", new Dictionary<string, string> { ["player1"] = p1, ["player2"] = p2 }).Result, Is.EqualTo($"Starting game for players {p1} and {p2}..."));
+
+        [SetUp]
+        public void SetUp()
+        {
+            if(File.Exists(@"D:\repository.json")) File.Delete(@"D:\repository.json");
+        }
 
         [Test]
         public void Api_NotFound()
