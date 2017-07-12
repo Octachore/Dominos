@@ -93,6 +93,7 @@ namespace Tests
         [Test]
         public void Api_Play_Win()
         {
+            StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
                 ["name"] = "Bob",
