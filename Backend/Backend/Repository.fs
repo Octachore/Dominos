@@ -11,8 +11,8 @@ let file = @"D:\repository.json"
 let read =
     match File.Exists(file) with
     | false -> 
-        File.Create(file) |> ignore
-        File.ReadAllText(file)
+        File.WriteAllText(file, "")
+        ""
     | true -> File.ReadAllText(file)
 
 
@@ -28,7 +28,6 @@ let read_games =
 
 let read_game id = read_games |> List.tryFind(fun g -> g.id = id)
 
-
 let create_game game = game::read_games |> serialize |> write
 
 let update_game game =
@@ -37,7 +36,7 @@ let update_game game =
         match g.id with
         | id when id = game.id -> game
         | _ -> g)
-    |> JsonConvert.SerializeObject |> write
+    |> serialize |> write
 
 let write_game (game: Game) =
     match read_game game.id with
