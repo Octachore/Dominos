@@ -398,4 +398,8 @@ type Tests() =
         Assert.Equal(expected_game2, games.Item 1, new GameEqualityComparer())
         Assert.Equal(expected_game3, games.Item 0, new GameEqualityComparer())
 
+    [<Fact>]
+    let ``generate_dominos generates the right number of dominos``() =
+        let value = generate_dominos()
+        Assert.Equal(28, value.Length)
 

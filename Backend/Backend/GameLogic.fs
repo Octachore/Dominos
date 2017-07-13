@@ -7,6 +7,19 @@ open Repository
 // Fields
 let rnd = System.Random()
 
+let generate_dominos() =
+    let rec gen_dom line col list = 
+        match line, col with
+        | 0, _ -> list @ [{v1=0; v2=0}]
+        | _ when col > line ->
+            list @ gen_dom (line-1) 0 []
+        | _ ->
+            let new_list = {v1=line; v2=col}::list
+            new_list @ gen_dom line (col+1) []
+    gen_dom 6 0 []
+
+let initial_deck = generate_dominos()
+
 // Functions
 let enough_players = true
 
