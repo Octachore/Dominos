@@ -4,7 +4,6 @@ open Suave.Successful
 open ObjectModel
 open Repository
 
-// Fields
 let rnd = System.Random()
 
 let generate_dominos() =
@@ -18,13 +17,30 @@ let generate_dominos() =
             new_list @ gen_dom line (col+1) []
     gen_dom 6 0 []
 
+let swap x y array =
+    array |> Array.mapi (fun i v ->
+        match i with
+        | _ when i = x -> array.[y]
+        | _ when i = y -> array.[x]
+        | _ -> v)
+
+let shuffle (array : _[]) =
+    let rec internal_shuffle (array : _[]) i =
+        match i with
+        | _ when i>= array.Length ->
+            let new_array = swap i (rnd.Next(i, array.Length)) array
+            internal_shuffle new_array (i+1)
+        | _ -> array
+    internal_shuffle array 0
+
+let random_subset set count = set |> shuffle |> Array.take count
+
 let initial_deck = generate_dominos()
 
-// Functions
 let enough_players = true
 
 let start_game player1 player2 = 
-    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
     write_game new_game
     OK (sprintf "Starting game for players %s and %s..." player1 player2)
 

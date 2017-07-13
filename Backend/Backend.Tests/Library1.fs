@@ -388,9 +388,9 @@ type Tests() =
         start_game "Charlie" "Eve" |> ignore
 
         // assert
-        let expected_game1 = {id=0; player1="Alice"; player2="Bob"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
-        let expected_game2 = {id=1; player1="Alice"; player2="Bob"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
-        let expected_game3 = {id=2; player1="Charlie"; player2="Eve"; board=[]; main_deck=[]; deck1=[]; deck2=[]}
+        let expected_game1 = {id=0; player1="Alice"; player2="Bob"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let expected_game2 = {id=1; player1="Alice"; player2="Bob"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let expected_game3 = {id=2; player1="Charlie"; player2="Eve"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
 
         let games = read_games()
         Assert.Equal(3, games.Length)
