@@ -122,8 +122,10 @@ namespace Tests
                 ["action"] = "place",
                 ["domino-v1"] = $"1",
                 ["domino-v2"] = $"2",
-                ["position-x"] = $"3",
-                ["position-y"] = $"4"
+                ["position-x1"] = $"3",
+                ["position-y1"] = $"4",
+                ["position-x2"] = $"5",
+                ["position-y2"] = $"6"
             }).Result, Is.EqualTo("Player Eve not found in any game"));
         }
     }
