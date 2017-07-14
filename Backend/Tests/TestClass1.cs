@@ -15,7 +15,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            if(File.Exists(@"D:\repository.json")) File.Delete(@"D:\repository.json");
+            if (File.Exists(@"D:\repository.json")) File.Delete(@"D:\repository.json");
         }
 
         [Test]
@@ -62,10 +62,9 @@ namespace Tests
         }
 
 
-        [TestCase(1, 2, 3, 4)]
-        [TestCase(4, 8, 15, 16)]
-        [TestCase(15, 16, 23, 42)]
-        public void Api_Play_Place(int v1, int v2, int x, int y)
+        [TestCase(1, 2, 3, 4, 5, 6)]
+        [TestCase(4, 8, 15, 16, 23, 42)]
+        public void Api_Play_Place(int v1, int v2, int x1, int y1, int x2, int y2)
         {
             StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
@@ -74,9 +73,11 @@ namespace Tests
                 ["action"] = "place",
                 ["domino-v1"] = $"{v1}",
                 ["domino-v2"] = $"{v2}",
-                ["position-x"] = $"{x}",
-                ["position-y"] = $"{y}"
-            }).Result, Is.EqualTo($"Bob places a domino of value {v1}:{v2} on the board at position {x}:{y}"));
+                ["position-x1"] = $"{x1}",
+                ["position-y1"] = $"{y1}",
+                ["position-x2"] = $"{x2}",
+                ["position-y2"] = $"{y2}"
+            }).Result, Is.EqualTo($"Bob places a domino of value {v1}:{v2} on the board at position {x1}:{y1}/{x2}:{y2}"));
         }
 
         [Test]

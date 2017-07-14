@@ -83,7 +83,7 @@ let play name action (domino : Domino) (position : Position) =
     match get_game name, action with
     | None, _ -> Failure (sprintf "Player %s not found in any game" name)
     | _, "draw" -> Success (sprintf "%s draws a new domino from the deck" name)
-    | _, "place" -> Success (sprintf "%s places a domino of value %i:%i on the board at position %i:%i" name domino.v1 domino.v2 position.x position.y)
+    | _, "place" -> Success (sprintf "%s places a domino of value %i:%i on the board at position %i:%i/%i:%i" name domino.v1 domino.v2 position.x1 position.y1 position.x2 position.y2)
     | _, "quit" -> Success (sprintf "%s quits the game" name)
     | _, "win" -> Success (sprintf "%s wins the game!" name)
     | _ -> Failure "Unknown action"

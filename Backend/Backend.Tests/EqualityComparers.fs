@@ -3,9 +3,15 @@
 open ObjectModel
 open System.Collections.Generic
 
-let domino_equals x y = x.v1 = y.v1 && x.v2 = y.v2
+let domino_equals x y =
+    x.v1 = y.v1 
+    && x.v2 = y.v2
 
-let position_equals x y = x.x = y.x && x.y = y.y
+let position_equals x y =
+    x.x1 = y.x1 
+    && x.y1 = y.y1 
+    && x.x2 = y.x2 
+    && x.y2 = y.y2
 
 let board_equals (x : Board) (y : Board) =
     x.Length = y.Length
@@ -13,11 +19,7 @@ let board_equals (x : Board) (y : Board) =
         let tuple1, tuple2 = x
         let domino1, position1 = tuple1
         let domino2, position2 = tuple2
-
-        let titi = 2
-
-        let value = domino_equals domino1 domino2 && position_equals position1 position2
-        value
+        domino_equals domino1 domino2 && position_equals position1 position2
     )
     
 let deck_equals (x : Deck) (y : Deck) =

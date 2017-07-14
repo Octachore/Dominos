@@ -33,11 +33,18 @@ let handle_play result =
 
 let route_play_post =
     request(fun r ->
-        match r.formData "name", r.formData "action", r.formData "domino-v1", r.formData "domino-v2", r.formData "position-x", r.formData "position-y" with
-        | Choice1Of2 name, Choice1Of2 action, Choice2Of2 _, Choice2Of2 _, Choice2Of2 _, Choice2Of2 _ 
-            -> handle_play (play name action {v1= -1; v2= -1} {x= -1; y= -1})   
-        | Choice1Of2 name, Choice1Of2 action,  Choice1Of2 v1 , Choice1Of2 v2, Choice1Of2 x, Choice1Of2 y 
-            -> handle_play (play name action {v1= v1 |> int; v2= v2 |> int} {x= x |> int; y= y |> int} )
+        match r.formData "name",
+            r.formData "action",
+            r.formData "domino-v1",
+            r.formData "domino-v2",
+            r.formData "position-x1",
+            r.formData "position-y1",
+            r.formData "position-x2",
+            r.formData "position-y2" with
+        | Choice1Of2 name, Choice1Of2 action, Choice2Of2 _, Choice2Of2 _, Choice2Of2 _, Choice2Of2 _ ,Choice2Of2 _, Choice2Of2 _ 
+            -> handle_play (play name action {v1= -1; v2= -1} {x1= -1; y1= -1; x2= -1; y2= -1})   
+        | Choice1Of2 name, Choice1Of2 action,  Choice1Of2 v1 , Choice1Of2 v2, Choice1Of2 x1, Choice1Of2 y1,Choice1Of2 x2, Choice1Of2 y2 
+            -> handle_play (play name action {v1= v1 |> int; v2= v2 |> int} {x1= x1 |> int; y1= y1 |> int; x2= x2 |> int; y2= y2 |> int} )
         | _ -> BAD_REQUEST "error")
 
 
