@@ -76,7 +76,7 @@ let place_is_legal (board : Board) (domino : Domino) (pos : Position) =
     let vals1, vals2 = board |> get_values squares1, board |> get_values squares2
     
     match vals1.Length <> 0, vals2.Length <> 0 with
-    | false, false -> false
+    | false, false -> false // at least one side of a domino must touch another one
     | true, false -> value_condition vals1 domino.v1
     | false, true -> value_condition vals2 domino.v2
     | _ -> value_condition vals1 domino.v1 && value_condition vals2 domino.v2
@@ -85,9 +85,12 @@ let do_placement game domino position = sprintf "Placed a domino of value %i:%i 
 
 /// <summary>Validates (free and legal) a place action.</summary>
 let valid_place (game : Game) (domino : Domino) (position : Position) =
-    match place_is_free game.board position, place_is_legal game.board domino position with
-    | true, true -> Success(do_placement game domino position)
-    | _ -> Failure("Illegal")
+    match game.board.Length with
+    | 0 -> Success(do_placement game domino position) // if the board is empty, any placement is valid
+    | _ ->
+        match place_is_free game.board position, place_is_legal game.board domino position with
+        | true, true -> Success(do_placement game domino position)
+        | _ -> Failure("Illegal")
 
 /// <summary>For API test purpose, when player are APIAlice and APIBob, gets an already filled board.</summary>
 let get_board player1 player2 =

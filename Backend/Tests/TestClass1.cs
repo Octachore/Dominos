@@ -60,6 +60,7 @@ namespace Tests
 
 
         [TestCase(1, 2, 3, 4, 5, 6)]
+        [TestCase(1, 6, 10, 9, 10, 10)]
         [TestCase(4, 8, 15, 16, 23, 42)]
         public void Api_Play_Place_Illegal_Moves(int v1, int v2, int x1, int y1, int x2, int y2)
         {

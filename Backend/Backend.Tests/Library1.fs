@@ -463,15 +463,19 @@ type Tests() =
         ]
         let game = {id=0; player1="Alice"; player2="Bob"; board=board; main_deck=initial_deck; deck1=[]; deck2=[]}
         let domino = {v1=1; v2=6}
+        let game_with_empty_board = { game with board=[] } 
 
         // act
         let res1 = valid_place game domino {x1=10; y1=9; x2=10; y2=10}
         let res2 = valid_place game domino {x1=12; y1=11; x2=13; y2=11}
         let res3 = valid_place game domino {x1=10; y1=12; x2=10; y2=13}
         let res4 = valid_place game domino {x1=10; y1=13; x2=10; y2=12}
+        let res5 = valid_place game_with_empty_board domino {x1=10; y1=9; x2=10; y2=10}
+
 
         Assert.Equal(Failure("Illegal"), res1)
         Assert.Equal(Failure("Illegal"), res2)
         Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 10 12 10 13), res3)
         Assert.Equal(Failure("Illegal"), res4)
+        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 10 9 10 10), res5)
 
