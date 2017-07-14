@@ -36,19 +36,16 @@ let place_is_free (board : Board) (pos : Position) =
 let get_squares_to_validate (pos : Position) =
     let rec around x y exclude_x exclude_y =
         [
-            (x+1, y+1)
             (x, y+1)
-            (x-1, y+1)
-            (x+1, y)
-            (x, y)
-            (x-1, y)
-            (x+1, y-1)
             (x, y-1)
-            (x-1, y-1)
+            (x+1, y)
+            (x-1, y)
         ] |> List.where (fun (square : int*int) ->
             let a, b = square
-            a <> exclude_x && b <> exclude_y)
-    (around pos.x1 pos.x1 pos.x2 pos.y2, around pos.x2 pos.x2 pos.x1 pos.y1)
+            a <> exclude_x || b <> exclude_y)
+    let a = around pos.x1 pos.y1 pos.x2 pos.y2
+    let b = around pos.x2 pos.y2 pos.x1 pos.y1
+    (a, b)
 
 /// <summary>Gets the value of the board item corresponding to the x and y coordinates on the board.</summary>
 let get_value x y (board_item : Domino*Position) =
@@ -60,8 +57,9 @@ let get_value x y (board_item : Domino*Position) =
 
 /// <summary>Gets the values around each square in the list on the board.</summary>
 let get_values (squares : (int*int) list) (board : Board) =
-    squares |> List.map (fun square -> 
-        board |> List.map (get_value 1 2)
+    squares |> List.map (fun (square : int*int) -> 
+        let x, y = square
+        board |> List.map (get_value x y)
         |> List.where(fun value -> 
             match value with
             | Some(i) -> true
@@ -69,25 +67,40 @@ let get_values (squares : (int*int) list) (board : Board) =
         |> List.map (fun option -> option.Value))
         |> List.concat
 
+/// <summary>Checks the requirements for a value of a domino.</summary>
+let value_condition values requirement = values |> all_same && values.[0] = requirement
+
 /// <summary>Checks if the placement of a domino on the board at a given position is legal (that the values matches and that there is no "parasite" value that also touches the domino).</summary>
 let place_is_legal (board : Board) (domino : Domino) (pos : Position) =
-    let squares_x, squares_y = get_squares_to_validate pos
-    board |> get_values squares_x |> all_same
-    && board |> get_values squares_y |>  all_same
+    let squares1, squares2 = get_squares_to_validate pos
+    let vals1, vals2 = board |> get_values squares1, board |> get_values squares2
     
-let do_placement game domino position = "TODO"
+    match vals1.Length <> 0, vals2.Length <> 0 with
+    | false, false -> false
+    | true, false -> value_condition vals1 domino.v1
+    | false, true -> value_condition vals2 domino.v2
+    | _ -> value_condition vals1 domino.v1 && value_condition vals2 domino.v2
+    
+let do_placement game domino position = sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 position.x1 position.y1 position.x2 position.y2
 
 /// <summary>Validates (free and legal) a place action.</summary>
 let valid_place (game : Game) (domino : Domino) (position : Position) =
     match place_is_free game.board position, place_is_legal game.board domino position with
     | true, true -> Success(do_placement game domino position)
-    | false, true -> Failure("Place occupied")
-    | true, false -> Failure("Illegal")
-    | _ -> Failure("Place occupied and illegal")
+    | _ -> Failure("Illegal")
+
+/// <summary>For API test purpose, when player are APIAlice and APIBob, gets an already filled board.</summary>
+let get_board player1 player2 =
+    match player1, player2 with
+    | "APIAlice", "APIBob" -> [
+            ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
+            ({v1=1; v2=5}, {x1=11; y1=11; x2=12; y2=11})
+        ]
+    | _ -> []
 
 /// <summary>Starts a new game.</summary>
 let start_game player1 player2 = 
-    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=get_board player1 player2; main_deck=initial_deck; deck1=[]; deck2=[]}
     write_game new_game
     OK (sprintf "Starting game for players %s and %s..." player1 player2)
 
@@ -127,7 +140,7 @@ let play name action (domino : Domino) (position : Position) =
     match get_game name, action with
     | None, _ -> Failure (sprintf "Player %s not found in any game" name)
     | _, "draw" -> Success (sprintf "%s draws a new domino from the deck" name)
-    | _, "place" -> Success (sprintf "%s places a domino of value %i:%i on the board at position %i:%i/%i:%i" name domino.v1 domino.v2 position.x1 position.y1 position.x2 position.y2)
+    | Some(game), "place" -> valid_place game domino position
     | _, "quit" -> Success (sprintf "%s quits the game" name)
     | _, "win" -> Success (sprintf "%s wins the game!" name)
     | _ -> Failure "Unknown action"

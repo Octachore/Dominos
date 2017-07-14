@@ -411,7 +411,67 @@ type Tests() =
         Assert.Equal(expected_game3, games.Item 0, new GameEqualityComparer())
 
     [<Fact>]
-    let ``generate_dominos generates the right number of dominos``() =
+    let ``game logic generates dominos``() =
         let value = generate_dominos()
         Assert.Equal(28, value.Length)
+
+    [<Fact>]
+    let ``game logic checks place is free``() =
+        // arrange
+        let board = [
+            ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
+            ({v1=1; v2=5}, {x1=11; y1=11; x2=12; y2=11})
+        ]
+
+        // act
+        let res1 = place_is_free board {x1=10; y1=9; x2=10; y2=10}
+        let res2 = place_is_free board {x1=12; y1=11; x2=13; y2=11}
+        let res3 = place_is_free board {x1=10; y1=12; x2=10; y2=13}
+        let res4 = place_is_free board {x1=10; y1=13; x2=10; y2=12}
+
+        Assert.False(res1)
+        Assert.False(res2)
+        Assert.True(res3)
+        Assert.True(res4)
+
+    [<Fact>]
+    let ``game logic checks place is legal``() =
+        // arrange
+        let board = [
+            ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
+            ({v1=1; v2=5}, {x1=11; y1=11; x2=12; y2=11})
+        ]
+        let domino = {v1=1; v2=6}
+
+        // act
+        let res1 = place_is_legal board domino {x1=10; y1=9; x2=10; y2=10}
+        let res2 = place_is_legal board domino {x1=12; y1=11; x2=13; y2=11}
+        let res3 = place_is_legal board domino {x1=10; y1=12; x2=10; y2=13}
+        let res4 = place_is_legal board domino {x1=10; y1=13; x2=10; y2=12}
+
+        Assert.False(res1)
+        Assert.True(res2)
+        Assert.True(res3)
+        Assert.False(res4)
+
+    [<Fact>]
+    let ``game logic places domino``() =
+        // arrange
+        let board = [
+            ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
+            ({v1=1; v2=5}, {x1=11; y1=11; x2=12; y2=11})
+        ]
+        let game = {id=0; player1="Alice"; player2="Bob"; board=board; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let domino = {v1=1; v2=6}
+
+        // act
+        let res1 = valid_place game domino {x1=10; y1=9; x2=10; y2=10}
+        let res2 = valid_place game domino {x1=12; y1=11; x2=13; y2=11}
+        let res3 = valid_place game domino {x1=10; y1=12; x2=10; y2=13}
+        let res4 = valid_place game domino {x1=10; y1=13; x2=10; y2=12}
+
+        Assert.Equal(Failure("Illegal"), res1)
+        Assert.Equal(Failure("Illegal"), res2)
+        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 10 12 10 13), res3)
+        Assert.Equal(Failure("Illegal"), res4)
 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Tests
@@ -64,12 +61,12 @@ namespace Tests
 
         [TestCase(1, 2, 3, 4, 5, 6)]
         [TestCase(4, 8, 15, 16, 23, 42)]
-        public void Api_Play_Place(int v1, int v2, int x1, int y1, int x2, int y2)
+        public void Api_Play_Place_Illegal_Moves(int v1, int v2, int x1, int y1, int x2, int y2)
         {
-            StartGame("Alice", "Bob");
+            StartGame("APIAlice", "APIBob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
-                ["name"] = "Bob",
+                ["name"] = "APIBob",
                 ["action"] = "place",
                 ["domino-v1"] = $"{v1}",
                 ["domino-v2"] = $"{v2}",
@@ -77,7 +74,25 @@ namespace Tests
                 ["position-y1"] = $"{y1}",
                 ["position-x2"] = $"{x2}",
                 ["position-y2"] = $"{y2}"
-            }).Result, Is.EqualTo($"Bob places a domino of value {v1}:{v2} on the board at position {x1}:{y1}/{x2}:{y2}"));
+            }).Result, Is.EqualTo($"Illegal"));
+        }
+
+        [TestCase(1, 6, 10, 12, 10, 13)]
+        [TestCase(4, 5, 12, 13, 12, 12)]
+        public void Api_Play_Place_Legal_Moves(int v1, int v2, int x1, int y1, int x2, int y2)
+        {
+            StartGame("APIAlice", "APIBob");
+            Assert.That(Post("/play", new Dictionary<string, string>
+            {
+                ["name"] = "APIBob",
+                ["action"] = "place",
+                ["domino-v1"] = $"{v1}",
+                ["domino-v2"] = $"{v2}",
+                ["position-x1"] = $"{x1}",
+                ["position-y1"] = $"{y1}",
+                ["position-x2"] = $"{x2}",
+                ["position-y2"] = $"{y2}"
+            }).Result, Is.EqualTo($"Placed a domino of value {v1}:{v2} on the board at position {x1}:{y1}/{x2}:{y2}"));
         }
 
         [Test]
