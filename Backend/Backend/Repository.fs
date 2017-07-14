@@ -1,4 +1,5 @@
-﻿module Repository
+﻿/// <summary>Provides helper functions for game state persistence in JSON file.</summary>
+module Repository
 
 open System.IO
 open ObjectModel

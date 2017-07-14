@@ -1,4 +1,5 @@
-﻿module Routes
+﻿/// <summary>Provides functions to handle application routes.</summary>
+module Routes
 
 open Suave
 open Suave.Filters
