@@ -456,6 +456,7 @@ type Tests() =
 
     [<Fact>]
     let ``game logic places domino``() =
+        init()
         // arrange
         let board = [
             ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
@@ -463,7 +464,9 @@ type Tests() =
         ]
         let game = {id=0; player1="Alice"; player2="Bob"; board=board; main_deck=initial_deck; deck1=[]; deck2=[]}
         let domino = {v1=1; v2=6}
-        let game_with_empty_board = { game with board=[] } 
+        let game_with_empty_board = { game with id=1; board=[] }
+        write_game game
+        write_game game_with_empty_board
 
         // act
         let res1 = valid_place game domino {x1=10; y1=9; x2=10; y2=10}
@@ -472,10 +475,13 @@ type Tests() =
         let res4 = valid_place game domino {x1=10; y1=13; x2=10; y2=12}
         let res5 = valid_place game_with_empty_board domino {x1=10; y1=9; x2=10; y2=10}
 
-
         Assert.Equal(Failure("Illegal"), res1)
         Assert.Equal(Failure("Illegal"), res2)
         Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 10 12 10 13), res3)
         Assert.Equal(Failure("Illegal"), res4)
         Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 10 9 10 10), res5)
 
+        let saved_game1 = (read_game 0).Value
+        let saved_game2 = (read_game 1).Value
+        Assert.Equal(3, saved_game1.board.Length)
+        Assert.Equal(1, saved_game2.board.Length)

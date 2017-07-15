@@ -80,8 +80,13 @@ let place_is_legal (board : Board) (domino : Domino) (pos : Position) =
     | true, false -> value_condition vals1 domino.v1
     | false, true -> value_condition vals2 domino.v2
     | _ -> value_condition vals1 domino.v1 && value_condition vals2 domino.v2
-    
-let do_placement game domino position = sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 position.x1 position.y1 position.x2 position.y2
+ 
+ /// <summary>Actually performs the domino placement.</summary>
+let do_placement (game : Game) domino position =
+    let new_board = (domino, position)::game.board
+    let new_game = { game with board=new_board }
+    write_game new_game
+    sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" domino.v1 domino.v2 position.x1 position.y1 position.x2 position.y2
 
 /// <summary>Validates (free and legal) a place action.</summary>
 let valid_place (game : Game) (domino : Domino) (position : Position) =
