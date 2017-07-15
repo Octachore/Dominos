@@ -53,9 +53,9 @@ namespace Tests
             StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
-                ["name"] = "Bob",
+                ["name"] = "Alice",
                 ["action"] = "draw"
-            }).Result, Is.EqualTo("Bob draws a new domino from the deck"));
+            }).Result, Is.EqualTo("Alice draws a new domino from the deck"));
         }
 
 
@@ -67,7 +67,7 @@ namespace Tests
             StartGame("APIAlice", "APIBob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
-                ["name"] = "APIBob",
+                ["name"] = "APIAlice",
                 ["action"] = "place",
                 ["domino-v1"] = $"{v1}",
                 ["domino-v2"] = $"{v2}",
@@ -85,7 +85,7 @@ namespace Tests
             StartGame("APIAlice", "APIBob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
-                ["name"] = "APIBob",
+                ["name"] = "APIAlice",
                 ["action"] = "place",
                 ["domino-v1"] = $"{v1}",
                 ["domino-v2"] = $"{v2}",
@@ -113,9 +113,9 @@ namespace Tests
             StartGame("Alice", "Bob");
             Assert.That(Post("/play", new Dictionary<string, string>
             {
-                ["name"] = "Bob",
+                ["name"] = "Alice",
                 ["action"] = "win"
-            }).Result, Is.EqualTo("Bob wins the game!"));
+            }).Result, Is.EqualTo("Alice wins the game!"));
         }
 
         [Test]

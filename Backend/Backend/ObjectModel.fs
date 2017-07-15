@@ -19,4 +19,4 @@ type Deck = Domino list
 type Board = (Domino * Position) list
 
 /// <summary>represents a domino game.</summary>
-type Game = {id:int; player1: string; player2: string; board: Board; main_deck: Deck; deck1: Deck; deck2: Deck}
+type Game = {id:int; player1: string; player2: string; turn:string; board: Board; main_deck: Deck; deck1: Deck; deck2: Deck}

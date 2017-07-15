@@ -108,7 +108,7 @@ let get_board player1 player2 =
 
 /// <summary>Starts a new game.</summary>
 let start_game player1 player2 = 
-    let new_game = {id=read_games().Length; player1=player1; player2=player2; board=get_board player1 player2; main_deck=initial_deck; deck1=[]; deck2=[]}
+    let new_game = {id=read_games().Length; player1=player1; player2=player2; turn=player1; board=get_board player1 player2; main_deck=initial_deck; deck1=[]; deck2=[]}
     write_game new_game
     OK (sprintf "Starting game for players %s and %s..." player1 player2)
 
@@ -144,14 +144,25 @@ let action_draw player =
         sprintf "Player %s draw a new domino (%i:%i)" player d.v1 d.v2
     | None -> "Main deck is empty"
 
+let switch_turn (game : Game) (name : string) =
+    match name with
+    | _ when name = game.player1 -> { game with turn=game.player2 }
+    | _ -> { game with turn=game.player1 }
+
 let play name action (domino : Domino) (position : Position) =
     match get_game name, action with
     | None, _ -> Failure (sprintf "Player %s not found in any game" name)
-    | _, "draw" -> Success (sprintf "%s draws a new domino from the deck" name)
-    | Some(game), "place" -> valid_place game domino position
-    | _, "quit" -> Success (sprintf "%s quits the game" name)
-    | _, "win" -> Success (sprintf "%s wins the game!" name)
-    | _ -> Failure "Unknown action"
+    | Some(game), _ ->
+        match name with
+        | _ when name <> game.turn && action <> "quit" -> Failure("Not your turn")
+        | _ ->
+            let new_game = switch_turn game name
+            match action with
+                | "draw" -> Success (sprintf "%s draws a new domino from the deck" name)
+                | "place" -> valid_place new_game domino position
+                | "quit" -> Success (sprintf "%s quits the game" name)
+                | "win" -> Success (sprintf "%s wins the game!" name)
+                | _ -> Failure "Unknown action"
 
 let handle_no_game_available watch =
         match watch with

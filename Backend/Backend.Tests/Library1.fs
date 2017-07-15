@@ -46,7 +46,7 @@ type Tests() =
             {v1=3; v2=3}
             {v1=1; v2=5}
         ]
-        let game = {id=12; player1="Alice"; player2="Bob"; board=board; main_deck=main_deck; deck1=deck1; deck2=deck2}
+        let game = {id=12; player1="Alice"; player2="Bob"; turn="Alice"; board=board; main_deck=main_deck; deck1=deck1; deck2=deck2}
 
         // act
         write_game game
@@ -149,7 +149,7 @@ type Tests() =
             {v1=3; v2=3}
             {v1=1; v2=5}
         ]
-        let game = {id=12; player1="Alice"; player2="Bob"; board=board; main_deck=main_deck; deck1=deck1; deck2=deck2}
+        let game = {id=12; player1="Alice"; player2="Bob"; turn="Alice"; board=board; main_deck=main_deck; deck1=deck1; deck2=deck2}
 
         // act
         write_game game
@@ -375,8 +375,8 @@ type Tests() =
             {v1=1; v2=1}
         ]
 
-        let game1 = {id=12; player1="Alice"; player2="Bob"; board=game1_board; main_deck=game1_main_deck; deck1=game1_deck1; deck2=game1_deck2}
-        let game2 = {id=56; player1="Charlie"; player2="Eve"; board=game2_board; main_deck=game2_main_deck; deck1=game2_deck1; deck2=game2_deck2}
+        let game1 = {id=12; player1="Alice"; player2="Bob"; turn="Alice"; board=game1_board; main_deck=game1_main_deck; deck1=game1_deck1; deck2=game1_deck2}
+        let game2 = {id=56; player1="Charlie"; player2="Eve"; turn="Charlie"; board=game2_board; main_deck=game2_main_deck; deck1=game2_deck1; deck2=game2_deck2}
 
         // act
         write_game game1
@@ -400,9 +400,9 @@ type Tests() =
         start_game "Charlie" "Eve" |> ignore
 
         // assert
-        let expected_game1 = {id=0; player1="Alice"; player2="Bob"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
-        let expected_game2 = {id=1; player1="Alice"; player2="Bob"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
-        let expected_game3 = {id=2; player1="Charlie"; player2="Eve"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let expected_game1 = {id=0; player1="Alice"; player2="Bob"; turn="Alice"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let expected_game2 = {id=1; player1="Alice"; player2="Bob"; turn="Alice"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let expected_game3 = {id=2; player1="Charlie"; player2="Eve"; turn="Charlie"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
 
         let games = read_games()
         Assert.Equal(3, games.Length)
@@ -462,7 +462,7 @@ type Tests() =
             ({v1=0; v2=1}, {x1=10; y1=10; x2=10; y2=11})
             ({v1=1; v2=5}, {x1=11; y1=11; x2=12; y2=11})
         ]
-        let game = {id=0; player1="Alice"; player2="Bob"; board=board; main_deck=initial_deck; deck1=[]; deck2=[]}
+        let game = {id=0; player1="Alice"; player2="Bob"; turn="Alice"; board=board; main_deck=initial_deck; deck1=[]; deck2=[]}
         let domino = {v1=1; v2=6}
         let game_with_empty_board = { game with id=1; board=[] }
         write_game game
@@ -485,3 +485,20 @@ type Tests() =
         let saved_game2 = (read_game 1).Value
         Assert.Equal(3, saved_game1.board.Length)
         Assert.Equal(1, saved_game2.board.Length)
+
+    [<Fact>]
+    let ``game logic not your turn``() =
+        init()
+        // arrange
+        let game = {id=0; player1="Alice"; player2="Bob"; turn="Alice"; board=[]; main_deck=initial_deck; deck1=[]; deck2=[]}
+        write_game game
+
+        // act
+        let res1 = play "Bob" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
+        let res2 = play "Alice" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
+        let res3 = play "Alice" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
+
+        // assert
+        Assert.Equal(Failure("Not your turn"), res1)
+        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" 1 6 10 10 10 11), res2)
+        Assert.Equal(Failure("Not your turn"), res3)
