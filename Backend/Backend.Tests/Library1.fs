@@ -495,10 +495,12 @@ type Tests() =
 
         // act
         let res1 = play "Bob" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
-        let res2 = play "Alice" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
+        let res2 = play "Alice" "place" {v1=1; v2=5} {x1=11; y1=11; x2=12; y2=11}
         let res3 = play "Alice" "place" {v1=1; v2=6} {x1=10; y1=10; x2=10; y2=11}
+        let res4 = play "Bob" "place" {v1=1; v2=6} {x1=11; y1=12; x2=10; y2=13}
 
         // assert
         Assert.Equal(Failure("Not your turn"), res1)
-        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" 1 6 10 10 10 11), res2)
+        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" 1 5 11 11 12 11), res2)
         Assert.Equal(Failure("Not your turn"), res3)
+        Assert.Equal(Success(sprintf "Placed a domino of value %i:%i on the board at position %i:%i/%i:%i" 1 6 11 12 10 13), res4)
